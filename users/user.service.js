@@ -7,8 +7,10 @@ module.exports = {
     logIn,
     register,
     updateJobs,
-    delete: _delete,
-    postJobs
+    deleteJob,
+    deleteAllJobs,
+    postJobs,
+    getAllJobs
 };
 
 async function logIn({ username, password }) {
@@ -51,15 +53,37 @@ async function updateJobs(id, params) {
 
 }
 
-async function _delete(id) {
-    const user = await getUser(id);
-    await user.destroy();
+async function deleteJob(id) {
+    const job = await getJob(id);
+    await job.destroy();
+}
+async function deleteAllJobs(id) {
+    await deletingAllJobs(id);
+    
 }
 
-// helper functions
 
+async function deletingAllJobs(id) {
+    const job = await db.models.Jobs.destroy({
+        where:{
+            user_id: id
+        }
+    });
+    if (!job) throw 'User not found';
+    return job;
+}
 async function getJob(id) {
     const job = await db.models.Jobs.findByPk(id);
+    if (!job) throw 'User not found';
+    return job;
+}
+
+async function getAllJobs(id){
+    const job = await db.models.Jobs.findAll({
+        where:{
+            user_id: id
+        }
+    });
     if (!job) throw 'User not found';
     return job;
 }

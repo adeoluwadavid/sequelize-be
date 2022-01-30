@@ -2,13 +2,16 @@ const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
 const validateRequest = require('../middleware/validate-request');
-const authorize = require('../middleware/authorize')
+const authorization = require('../middleware/authorization')
 const userService = require('./user.service');
 
 router.post('/register', registerSchema, register);
 router.post('/login', logInSchema, logIn);
-router.post('/postjobs/:id', postJobsSchema,postJobs)
-router.post('/updatejobs/:id', postJobsSchema,updateJobs)
+router.post('/postjobs/:id', authorization,postJobsSchema,postJobs)
+router.put('/updatejobs/:id', authorization,postJobsSchema,updateJobs)
+router.delete('/deletejob/:id', authorization,deleteJob)
+router.delete('/deletejobs/:id',authorization, deleteAllJobs);
+router.get('/getjobs/:id', authorization, getAllJobs)
 
 function registerSchema(req, res, next) {
     const schema = Joi.object({
@@ -30,7 +33,9 @@ function updateJobs(req, res, next) {
         .catch(next);
 }
 
-
+function getAllJobs(req, res, next){
+    userService.getAllJobs(req.params.id).then((user)=> res.json(user)).catch(next)
+}
 function register(req, res, next) {
     userService.register(req.body)
         .then(() => res.json({ message: 'Registration successful' }))
@@ -62,5 +67,14 @@ function postJobsSchema(req, res, next){
     validateRequest(req, next, schema);
 }
 
-
+function deleteJob(req, res, next) {
+    userService.deleteJob(req.params.id)
+        .then(() => res.json({ message: 'Job deleted successfully' }))
+        .catch(next);
+}
+function deleteAllJobs(req, res, next) {
+    userService.deleteAllJobs(req.params.id)
+        .then(() => res.json({ message: 'All Jobs deleted successfully' }))
+        .catch(next);
+}
 module.exports = router;
