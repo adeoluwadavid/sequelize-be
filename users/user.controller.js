@@ -8,7 +8,7 @@ const userService = require('./user.service');
 router.post('/register', registerSchema, register);
 router.post('/login', logInSchema, logIn);
 router.post('/postjobs/:id', authorization,postJobsSchema,postJobs)
-router.put('/updatejobs/:id', authorization,postJobsSchema,updateJobs)
+router.put('/updatejobs/:id', authorization,updateJobs)
 router.delete('/deletejob/:id', authorization,deleteJob)
 router.delete('/deletejobs/:id',authorization, deleteAllJobs);
 router.get('/getjobs/:id', authorization, getAllJobs)
@@ -18,7 +18,7 @@ function registerSchema(req, res, next) {
         firstName: Joi.string().required(),
         lastName: Joi.string().required(),
         username: Joi.string().required(),
-        password: Joi.string().min(6).required()
+        password: Joi.string().min(5).required()
     });
     validateRequest(req, next, schema);
 }
@@ -28,6 +28,7 @@ function postJobs(req, res, next) {
         .catch(next);
 }
 function updateJobs(req, res, next) {
+    console.log("**HERE**")
     userService.updateJobs(req.params.id, req.body)
         .then(user => res.json(user))
         .catch(next);
@@ -63,6 +64,16 @@ function postJobsSchema(req, res, next){
         description: Joi.string().required(),
         budget: Joi.string().required(),
         contact_email: Joi.string().required(),
+    });
+    validateRequest(req, next, schema);
+}
+function updateJobsSchema(req, res, next){
+    const schema = Joi.object({
+        title: Joi.string(),
+        technologies: Joi.string(),
+        description: Joi.string(),
+        budget: Joi.string(),
+        contact_email: Joi.string(),
     });
     validateRequest(req, next, schema);
 }
