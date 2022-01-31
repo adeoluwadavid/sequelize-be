@@ -14,7 +14,7 @@ npm install
 ```
 
 ```
-Create a database of your database called 'job-application' and the table will be auto-populated
+Create a database of your database called 'job-application' and the table of 'Users' and 'Jobs' will be auto-populated
 ```
 ### Compiles and run
 ```
